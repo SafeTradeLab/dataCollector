@@ -1,0 +1,1 @@
+# SafeTradeLab Data Collector Package
