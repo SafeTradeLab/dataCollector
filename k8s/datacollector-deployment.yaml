@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: datacollector
+  namespace: safetradelab
+  labels:
+    app: datacollector
+spec:
+  replicas: 1  # Only 1 replica to avoid duplicate data collection
+  selector:
+    matchLabels:
+      app: datacollector
+  template:
+    metadata:
+      labels:
+        app: datacollector
+    spec:
+      containers:
+      - name: datacollector
+        image: YOUR_DOCKER_REGISTRY/datacollector:latest  # Update with your image
+        imagePullPolicy: Always
+        env:
+        # ConfigMap values
+        - name: SYMBOLS
+          valueFrom:
+            configMapKeyRef:
+              name: datacollector-config
+              key: SYMBOLS
+        - name: INTERVAL
+          valueFrom:
+            configMapKeyRef:
+              name: datacollector-config
+              key: INTERVAL
+        - name: UPDATE_FREQUENCY_MINUTES
+          valueFrom:
+            configMapKeyRef:
+              name: datacollector-config
+              key: UPDATE_FREQUENCY_MINUTES
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: datacollector-config
+              key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: datacollector-config
+              key: DB_PORT
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: datacollector-config
+              key: DB_NAME
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              name: datacollector-config
+              key: DB_USER
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: datacollector-config
+              key: LOG_LEVEL
+        - name: LOG_FILE
+          valueFrom:
+            configMapKeyRef:
+              name: datacollector-config
+              key: LOG_FILE
+        # Secret values
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: datacollector-secrets
+              key: DB_PASSWORD
+        - name: BINANCE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: datacollector-secrets
+              key: BINANCE_API_KEY
+        - name: BINANCE_API_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: datacollector-secrets
+              key: BINANCE_API_SECRET
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        volumeMounts:
+        - name: logs
+          mountPath: /app/logs
+      volumes:
+      - name: logs
+        emptyDir: {}
+      restartPolicy: Always

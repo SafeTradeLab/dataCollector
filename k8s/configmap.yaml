@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: datacollector-config
+  namespace: safetradelab
+data:
+  # Trading Configuration
+  SYMBOLS: "BTCUSDT,ETHUSDT,SOLUSDT"
+  INTERVAL: "5m"
+  UPDATE_FREQUENCY_MINUTES: "5"
+
+  # Database Configuration
+  DB_HOST: "postgres-service"
+  DB_PORT: "5432"
+  DB_NAME: "safetradelab"
+  DB_USER: "postgres"
+
+  # Logging Configuration
+  LOG_LEVEL: "INFO"
+  LOG_FILE: "logs/datacollector.log"
